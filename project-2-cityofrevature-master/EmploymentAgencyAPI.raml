@@ -1,0 +1,289 @@
+#%RAML 1.0
+title: EmploymentAgencyAPI
+baseUri: localhost:8080\EmploymentAgency
+description: |-
+  Lists available personnel for employment
+  List available personnel details (Requires username/password)
+  Hire a person
+  Release a person
+  List employees of an organization
+  Apply for a client account
+mediaType:
+  - application/json
+version: "1.0"
+protocols:
+  - http
+  - https
+/available:
+  get:
+    displayName: "null"
+    description: "null"
+    responses:
+      "200":
+        description: Lists personnel available for employment
+        body:
+          example:
+            strict: true
+            value:
+              company: Not Assigned
+              name: Stephen Weinhart
+              phone: 123-456-7890
+              skill: electrical
+          type: object
+/clients:
+  get:
+    displayName: "null"
+    description: "null"
+    responses:
+      "200":
+        description: Get companies who are Agency clients
+        body:
+          description: Lists Agency clients
+          example:
+            strict: true
+            value:
+              name: Revature Dodge
+              phone: 123-456-7890
+              email: test@revature.dodge.com
+          type: object
+/available/{id}:
+  get:
+    displayName: "null"
+    description: "null"
+    queryParameters:
+      username:
+        description: ""
+        default: admin
+        example: admin
+        type: string
+      password:
+        description: ""
+        default: admin
+        example: admin
+        type: string
+    responses:
+      "200":
+        description: List Personnel Details
+        body:
+          description: Personnel Details
+          example:
+            strict: true
+            value:
+              name: Stephen Weinhart
+              ss: 123-45-6789
+              email: steve@test.net
+              company: Unemployed
+              phone: 123-456-7890
+              skill: electrical
+          type: object
+      "401":
+        description: Bad username or password
+        body:
+          text/plain:
+            default: Invalid Username or Password
+            example: Invalid Username or Password
+            type: string
+      "404":
+        description: Invalid id
+        body:
+          text/plain:
+            description: Personnel Details
+            example: Not Found
+            type: string
+  uriParameters:
+    id:
+      description: Employee id
+      example: 1
+      type: number
+      minimum: 1
+      format: int
+/clients/apply:
+  post:
+    queryParameters:
+      name:
+        description: Company Name
+        example: Revature Dodge
+        type: string
+        minLength: 4
+      phone:
+        description: Company Phone Number
+        example: 123-456-7890
+        type: string
+        minLength: 12
+      email:
+        description: ""
+        example: test@test.com
+        type: string
+      username:
+        description: New Username
+        default: admin
+        example: admin
+        type: string
+      password:
+        description: New Password
+        default: admin
+        example: admin
+        type: string
+    responses:
+      "200":
+        description: New Client added
+        body:
+          text/plain:
+            default: New Client Added
+            example: New Client Added
+            type: string
+      "400":
+        description: Bad Input
+        body:
+          text/plain:
+            description: Query Parameter not good
+            example: Bad Request
+            type: string
+/clients/{name}:
+  get:
+    displayName: "null"
+    description: "null"
+    responses:
+      "200":
+        description: Get Client By Id
+        body:
+          description: Client by Id
+          example:
+            strict: true
+            value:
+              name: Revature Dodge
+              phone: 123-456-7890
+              email: test@revature.dodge.com
+          type: object
+      "404":
+        description: Client doesn't exist
+        body:
+          text/plain:
+            example: Not Found
+            type: string
+  uriParameters:
+    name:
+      description: ""
+      example: Example
+      type: string
+/clients/{name}/employees:
+  get:
+    displayName: "null"
+    description: "null"
+    responses:
+      "200":
+        description: Lists employees of client
+        body:
+          description: client employee list
+          example:
+            strict: true
+            value:
+              name: Stephen Weinhart
+              phone: 123-456-7890
+              email: steve@test.net
+              skill: electrical
+          type: object
+      "404":
+        description: Client doesn't exist
+        body:
+          text/plain:
+            example: Not Found
+            type: string
+  uriParameters:
+    name:
+      description: Company Name
+      example: Example
+      type: string
+/clients/{name}/hire/{id}:
+  post:
+    displayName: "null"
+    description: "null"
+    queryParameters:
+      username:
+        description: Company Username
+        default: admin
+        example: admin
+        type: string
+      password:
+        description: Company password
+        default: admin
+        example: admin
+        type: string
+    responses:
+      "200":
+        description: Hire Employee
+        body:
+          description: Response String
+          example: Revature has successfully hired Steve Weinhart
+          type: string
+      "400":
+        description: Invalid Client or Employee Id
+        body:
+          text/plain:
+            description: Response String
+            example: Invalid Request
+            type: string
+      "401":
+        description: Invalid Username/Password
+        body:
+          text/plain:
+            description: Response String
+            example: Unauthorized
+            type: string
+  uriParameters:
+    empId:
+      description: Hire an employee by Id
+      example: 1
+      type: number
+      minimum: 1
+      format: int
+    name:
+      description: Client Id
+      example: Example
+      type: string
+/clients/{name}/release/{id}:
+  post:
+    queryParameters:
+      username:
+        description: ""
+        default: admin
+        example: admin
+        type: string
+      password:
+        description: ""
+        default: admin
+        example: admin
+        type: string
+    responses:
+      "200":
+        description: Release Employee
+        body:
+          text/plain:
+            description: Response String
+            example: "Revature has successfully released Steve Weinhart "
+            type: string
+      "400":
+        description: Client name or personnel Id invalid
+        body:
+          text/plain:
+            description: Response String
+            example: Bad Request
+            type: string
+      "401":
+        description: Invalid credentials
+        body:
+          text/plain:
+            description: Response String
+            example: Unauthorized
+            type: string
+  uriParameters:
+    id:
+      description: Employee Id
+      example: 1
+      type: number
+      minimum: 1
+      format: int
+    name:
+      description: Client Id
+      example: Example
+      type: string

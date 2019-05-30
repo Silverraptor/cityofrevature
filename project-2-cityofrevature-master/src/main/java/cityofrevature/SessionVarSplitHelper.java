@@ -9,6 +9,7 @@ public class SessionVarSplitHelper implements Callable {
 	@Override
 	public Object onCall(MuleEventContext eventContext) throws Exception {
 		String name = eventContext.getMessage().getInvocationProperty("name");
+		eventContext.getMessage().setProperty("fullname", name, PropertyScope.SESSION);
 		eventContext.getMessage().setProperty("first", name.split(" ")[0], PropertyScope.SESSION);
 		eventContext.getMessage().setProperty("last", name.split(" ")[1], PropertyScope.SESSION);
 		return null;

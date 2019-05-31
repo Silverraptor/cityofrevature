@@ -1,5 +1,8 @@
 package cityofrevature;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.codehaus.jackson.JsonNode;
 import org.mule.api.MuleEventContext;
 import org.mule.api.lifecycle.Callable;
@@ -15,7 +18,9 @@ public class NameHelper implements Callable {
 		for (JsonNode jn : jna)
 			if (jn.get("name").getTextValue().equals(name))
 				return jn;
-		return null;
+		Map<String,String> hm = new HashMap<String,String>();
+		hm.put("nobody", "found");
+		return hm;
 	}
 
 }

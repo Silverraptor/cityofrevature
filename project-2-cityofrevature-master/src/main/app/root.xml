@@ -78,24 +78,23 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 			path="/workers/delete/#[sessionVars.id]" method="DELETE" doc:name="HTTP" />
 	</flow>
 	<flow name="rootSub_Flow_delete_criminal">
+        <logger message="rootSub_Flow_delete_criminal" level="INFO" doc:name="Logger"/>
 		<http:request config-ref="HTTP_Request_Configuration_police"
 			path="/criminals" method="GET" doc:name="HTTP" />
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
 		<json:json-to-object-transformer
 			doc:name="JSON to Object" />
-		<component class="cityofrevature.NameHelper" doc:name="Java" />
-		<json:object-to-json-transformer
-			doc:name="Object to JSON" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
-		<json:json-to-object-transformer
-			doc:name="JSON to Object" />
+        <logger message="#[sessionVars.fullname]" level="INFO" doc:name="Logger"/>
 		<component class="cityofrevature.NametoIdHelper" doc:name="Java" />
 		<set-session-variable variableName="id" value="#[payload]"
 			doc:name="Session Variable" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
-		<set-payload value="#[NullPayload.getInstance()]"
-			doc:name="Set Payload" />
+        <logger message="#[sessionVars.id]" level="INFO" doc:name="Logger"/>
 		<http:request config-ref="HTTP_Request_Configuration_police"
-			path="/criminals/delete/#[sessionVars.id]" method="DELETE" doc:name="HTTP" />
+			path="/criminals/delete/{id}" method="DELETE" doc:name="HTTP" >
+            <http:request-builder>
+                <http:uri-param paramName="id" value="#[sessionVars.id]"/>
+            </http:request-builder>
+        </http:request>
 		<catch-exception-strategy doc:name="Catch Exception Strategy">
 			<set-payload value="#[{}]" mimeType="application/json"
 				doc:name="Set Payload" />
@@ -105,24 +104,23 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 		</catch-exception-strategy>
 	</flow>
 	<flow name="rootSub_Flow_delete_police_worker">
+        <logger message="rootSub_Flow_delete_police_worker" level="INFO" doc:name="Logger"/>
 		<http:request config-ref="HTTP_Request_Configuration_police"
-			path="/criminals" method="GET" doc:name="HTTP" />
+			path="/workers" method="GET" doc:name="HTTP" />
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
 		<json:json-to-object-transformer
 			doc:name="JSON to Object" />
-		<component class="cityofrevature.NameHelper" doc:name="Java" />
-		<json:object-to-json-transformer
-			doc:name="Object to JSON" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
-		<json:json-to-object-transformer
-			doc:name="JSON to Object" />
+        <logger message="#[sessionVars.fullname]" level="INFO" doc:name="Logger"/>
 		<component class="cityofrevature.NametoIdHelper" doc:name="Java" />
 		<set-session-variable variableName="id" value="#[payload]"
 			doc:name="Session Variable" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
-		<set-payload value="#[NullPayload.getInstance()]"
-			doc:name="Set Payload" />
+        <logger message="#[sessionVars.id]" level="INFO" doc:name="Logger"/>
 		<http:request config-ref="HTTP_Request_Configuration_police"
-			path="/workers/delete/#[sessionVars.id]" method="DELETE" doc:name="HTTP" />
+			path="/workers/delete/{id}" method="DELETE" doc:name="HTTP" >
+            <http:request-builder>
+                <http:uri-param paramName="id" value="#[sessionVars.id]"/>
+            </http:request-builder>
+        </http:request>
 		<catch-exception-strategy doc:name="Catch Exception Strategy">
 			<set-payload value="#[{}]" mimeType="application/json"
 				doc:name="Set Payload" />
@@ -135,14 +133,11 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 			query="dsql:SELECT Id FROM Contact WHERE FirstName = '#[sessionVars.first]' AND LastName = '#[sessionVars.last]'"
 			doc:name="Salesforce" />
 		<component class="cityofrevature.SalesforceHelper" doc:name="Java" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<component class="cityofrevature.IdHelper" doc:name="Java" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<sfdc:delete config-ref="Salesforce__Basic_Authentication_john"
 			doc:name="Salesforce">
 			<sfdc:ids ref="#[payload]" />
 		</sfdc:delete>
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 	</flow>
 	<flow name="delete:/city/integration/person/{name}:root-config">
 		<set-payload value="#[NullPayload.getInstance()]"
@@ -151,20 +146,15 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 			value="#[message.inboundProperties.'http.uri.params'.name]" doc:name="Variable" />
 		<component class="cityofrevature.SessionVarSplitHelper"
 			doc:name="Java" />
-		<logger message="#[sessionVars.first], #[sessionVars.last]"
-			level="INFO" doc:name="Logger" />
 		<sfdc:query config-ref="Salesforce__Basic_Authentication_josh"
 			query="dsql:SELECT Id FROM Contact WHERE FirstName = '#[sessionVars.first]' AND LastName = '#[sessionVars.last]'"
 			doc:name="Salesforce" />
 		<component class="cityofrevature.SalesforceHelper" doc:name="Java" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<component class="cityofrevature.IdHelper" doc:name="Java" />
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<sfdc:delete config-ref="Salesforce__Basic_Authentication_josh"
 			doc:name="Salesforce">
 			<sfdc:ids ref="#[payload]" />
 		</sfdc:delete>
-		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<set-payload value="#[{}]" mimeType="application/json"
 			doc:name="Set Payload" />
 		<flow-ref name="rootSub_Flow_delete_criminal" doc:name="Flow Reference" />

@@ -131,14 +131,14 @@ http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/cor
 		</catch-exception-strategy>
 	</flow>
 	<flow name="rootSub_Flow_delete_factory_contact">
-		<sfdc:query config-ref="Salesforce__Basic_Authentication_josh"
+		<sfdc:query config-ref="Salesforce__Basic_Authentication_john"
 			query="dsql:SELECT Id FROM Contact WHERE FirstName = '#[sessionVars.first]' AND LastName = '#[sessionVars.last]'"
 			doc:name="Salesforce" />
 		<component class="cityofrevature.SalesforceHelper" doc:name="Java" />
 		<logger message="#[payload]" level="INFO" doc:name="Logger" />
 		<component class="cityofrevature.IdHelper" doc:name="Java" />
 		<logger message="#[payload]" level="INFO" doc:name="Logger" />
-		<sfdc:delete config-ref="Salesforce__Basic_Authentication_josh"
+		<sfdc:delete config-ref="Salesforce__Basic_Authentication_john"
 			doc:name="Salesforce">
 			<sfdc:ids ref="#[payload]" />
 		</sfdc:delete>
